@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GithubUsers</string>
+    <string name="over_limit">Sorry, has exceeded the hourly request limit</string>
+</resources>
