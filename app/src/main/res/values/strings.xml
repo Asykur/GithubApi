@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GithubUsers</string>
-    <string name="over_limit">Sorry, has exceeded the hourly request limit</string>
+    <string name="over_limit">Sorry, API rate limit exceeded </string>
+    <string name="empty_search">System cannot find data with keywords</string>
 </resources>

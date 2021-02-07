@@ -9,7 +9,6 @@
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@android:color/darker_gray"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:id="@+id/imgUser"

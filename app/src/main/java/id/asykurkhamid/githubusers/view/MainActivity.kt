@@ -5,57 +5,88 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import id.asykurkhamid.githubusers.R
 import id.asykurkhamid.githubusers.adapter.SearchAdapter
 import id.asykurkhamid.githubusers.model.Item
-import id.asykurkhamid.githubusers.model.SearchModel
-import id.asykurkhamid.githubusers.presenter.SearchPresenter
-import id.asykurkhamid.githubusers.utils.SearchViewHelper
+import id.asykurkhamid.githubusers.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), SearchViewHelper {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var textQuery: String
+    private var textQuery = ""
     private lateinit var adapter: SearchAdapter
     private var itemList = ArrayList<Item>()
     private var page = 1
     private lateinit var layoutManager: LinearLayoutManager
-    private var isFirstCall = false
+    private var isLoadingSearch = false
     private var isOverLimit = false
+    private var viewModel = UserViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        ).get(UserViewModel::class.java)
+
         searchUser.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    isLoadingSearch = true
+                    textQuery = query
+                    itemList.clear()
+                    if (isOverLimit) {
+                        Snackbar.make(rvSearch, R.string.over_limit, Snackbar.LENGTH_LONG)
+                            .show()
+                    } else {
+                        callItem(query)
+                    }
+                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    textQuery = newText
-                    if (newText.length >= 3) {
-                        if (isOverLimit){
-                            Toast.makeText(this@MainActivity,R.string.over_limit,Toast.LENGTH_SHORT).show()
-                        }else{
-                            callItem(textQuery)
-                        }
-                    }
-                }
                 return false
             }
 
         })
         initAdapter()
         initScrollListener()
+
+        viewModel.observeUser().observe(this, Observer { userList ->
+            showLoading(false)
+            if (userList != null && userList.items.isNotEmpty()) {
+                rvSearch.visibility = View.VISIBLE
+                emptyState.visibility = View.GONE
+
+                itemList.addAll(userList.items)
+                adapter.setItemData(itemList)
+                adapter.notifyDataSetChanged()
+            } else {
+                emptyState.visibility = View.VISIBLE
+                tvEmpty.text = resources.getString(R.string.empty_search)
+                rvSearch.visibility = View.GONE
+            }
+        })
+
+        viewModel.observeErrMessage().observe(this, Observer { errMsg ->
+                adapter.isOverLimit(true, errMsg)
+                adapter.notifyDataSetChanged()
+                isOverLimit = true
+
+        })
     }
 
     private fun initAdapter() {
-        adapter = SearchAdapter(itemList);
+        adapter = SearchAdapter();
         layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         rvSearch.layoutManager = layoutManager
         rvSearch.adapter = adapter
@@ -109,42 +140,19 @@ class MainActivity : AppCompatActivity(), SearchViewHelper {
     }
 
     private fun callItem(text: String) {
-        SearchPresenter(this).getUser(text, page, 10)
-
+        showLoading(true)
+        isLoadingSearch = false
+        viewModel.callUser(text, page, 10)
+        page++
     }
 
-
-    override fun showLoading() {
-        if (!isFirstCall){
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoadingSearch && isLoading) {
             pgMain.visibility = View.VISIBLE
             emptyState.visibility = View.GONE
+        } else {
+            pgMain.visibility = View.GONE
         }
     }
 
-    override fun hideLoading() {
-        pgMain.visibility = View.GONE
-    }
-
-    override fun sendDataUser(user: SearchModel?) {
-        if (user != null && user.items.isNotEmpty()) {
-            rvSearch.visibility = View.VISIBLE
-            emptyState.visibility = View.GONE
-
-            isFirstCall = true
-            page++
-            itemList.addAll(user.items)
-            adapter.setItemData(itemList)
-            adapter.notifyDataSetChanged()
-        }else{
-            emptyState.visibility = View.VISIBLE
-            tvEmpty.text = "system cannot find data with keywords $textQuery"
-            rvSearch.visibility = View.GONE
-        }
-    }
-
-    override fun overLimit(message: String) {
-        adapter.isOverLimit(true)
-        adapter.notifyDataSetChanged()
-        isOverLimit = true
-    }
 }
