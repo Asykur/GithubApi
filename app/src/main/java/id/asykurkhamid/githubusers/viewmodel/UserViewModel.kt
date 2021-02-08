@@ -17,7 +17,7 @@ class UserViewModel : ViewModel(){
     private var errMessage = MutableLiveData<String>()
 
     fun callUser(keyword: String, page: Int, limit:Int){
-        val api = ServiceFactory().instanceServices()
+        val api = ServiceFactory.instanceServices
         val call = api.callSearch(keyword,page,limit)
 
         call.enqueue(object : Callback<SearchModel> {

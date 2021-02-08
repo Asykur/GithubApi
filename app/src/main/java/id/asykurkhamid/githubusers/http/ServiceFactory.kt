@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class ServiceFactory {
+object ServiceFactory {
 
     private fun retrofit(): Retrofit {
         val logging = HttpLoggingInterceptor()
@@ -28,7 +28,7 @@ class ServiceFactory {
 
     }
 
-    fun instanceServices(): Services {
-        return retrofit().create(Services::class.java)
+    val instanceServices: Services by lazy{
+        retrofit().create(Services::class.java)
     }
 }
