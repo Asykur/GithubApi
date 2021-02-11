@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">GithubUsers</string>
-    <string name="over_limit">Sorry, API rate limit exceeded </string>
+    <string name="over_limit">API rate limit exceeded </string>
     <string name="empty_search">System cannot find data with keywords</string>
+    <string name="search_github_users">Search Github Users</string>
+    <string name="hmmm_i_can_t_see_anything">Hmmm.. i can\'t see anything</string>
+    <string name="oops_something_went_wrong">Oops.. Something went wrong</string>
+    <string name="emptyimage">emptyImage</string>
+
 </resources>

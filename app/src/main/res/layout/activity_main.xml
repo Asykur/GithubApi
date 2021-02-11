@@ -7,75 +7,83 @@
     android:background="@android:color/white"
     tools:context=".view.MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardSearch"
         android:layout_width="match_parent"
+        android:layout_margin="@dimen/dimens_10dp"
         android:layout_height="wrap_content"
-        android:id="@+id/view"
-        android:padding="@dimen/dimens_8dp"
-        android:backgroundTint="@color/colorPrimary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/colorPrimary">
+        app:cardCornerRadius="@dimen/dimens_40dp"
+        app:cardElevation="@dimen/dimens_5dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.SearchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:focusable="false"
-            app:iconifiedByDefault="false"
-            app:queryHint="Search Github Users"
+        <EditText
             android:id="@+id/searchUser"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="@dimen/dimens_14dp"
+            android:imeOptions="actionSearch"
+            android:inputType="textNoSuggestions"
+            android:paddingStart="@dimen/dimens_14dp"
+            android:paddingEnd="0dp"
+            android:selectAllOnFocus="true"
+            tools:hint="@string/search_github_users"
+            android:autofillHints="@string/search_github_users" />
+    </androidx.cardview.widget.CardView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSearch"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/view"
+        android:background="@android:color/white"
+        android:layout_marginTop="@dimen/dimens_10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/rvSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/cardSearch" />
 
     <ProgressBar
+        android:id="@+id/pgMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/pgMain"
-        app:layout_constraintTop_toBottomOf="@+id/view"
-        app:layout_constraintRight_toRightOf="parent"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardSearch" />
 
     <LinearLayout
+        android:id="@+id/emptyState"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone"
-        android:id="@+id/emptyState"
-        app:layout_constraintTop_toBottomOf="@+id/view"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardSearch">
 
         <ImageView
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:src="@drawable/emptystate"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hmmm.. i can't see anything"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:src="@drawable/emptystate"
+            android:contentDescription="@string/emptyimage" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimens_5dp"
+            android:text="@string/oops_something_went_wrong"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/tvEmpty"
-            tools:text="system cannot find data with keywords"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimens_5dp"
+            tools:text="system cannot find data with keywords" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
